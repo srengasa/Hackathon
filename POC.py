@@ -34,13 +34,13 @@ from sklearn.naive_bayes import GaussianNB
 from sklearn.svm import SVC
 
 #url = "https://archive.ics.uci.edu/ml/machine-learning-databases/iris/iris.data"
-url="C:/Hackathon/TD1.csv"
-names = ['Gender', 'Insurer Id', 'No Of Days', 'Claims Type', 'Claims Charge','Age','class']
+url="E:/GitHub Projs/Hackathon/TD1.csv"
+names = ['Gender', 'No Of Days', 'Claims Type', 'Claims Charge','Age','class']
 dataset = pandas.read_csv(url, names=names)
 print(dataset.shape)
 # head
 print(dataset.head(20))
-# descriptions
+# descriptions 
 print(dataset.describe())
 # class distribution
 print(dataset.groupby('class').size())
@@ -48,9 +48,9 @@ print(dataset.groupby('class').size())
 #dataset.plot(kind='box', subplots=True, layout=(2,2), sharex=False, sharey=False)
 #plt.show()
 array = dataset.values
-X = array[:,0:6]
+X = array[:,0:5]
 print("X = {}".format(X))
-Y = array[:,6]
+Y = array[:,5]
 print("Y = {}".format(Y))
 validation_size = 0.20
 seed = 7
@@ -61,8 +61,15 @@ X_train, X_validation, Y_train, Y_validation = model_selection.train_test_split(
 #print("X_validation{}".format(Y_train))
 #print("X_validation{}".format(X_validation))
 #print("X_train{}".format(len(X_train)))
-
+print("X_validation = {} \n\n Y_validation = {}".format(X_validation, Y_validation))
 # Make predictions on validation dataset
+xValidData = []
+xtrain = []
+for xx in X_validation:
+    xValidData.append(xx)
+for xt in X_train:
+    xtrain.append(xt)
+print("missed labels ****** {}".format(xtrain))
 knn = KNeighborsClassifier()
 knn.fit(X_train, Y_train)
 predictions = knn.predict(X_validation)
