@@ -28,30 +28,73 @@ from sklearn.svm import SVC
 #url="E:/GitHub Projs/Hackathon/TD1.csv"
 #names = ['Gender', 'Insurer Id', 'No Of Days', 'Claims Type', 'Claims Charge','Age','class']
 #dataset = pandas.read_csv(url, names=names)
-config = configparser.ConfigParser()
-config.read("E:/GitHub Projs/Hackathon/properties.ini")
-dataset = pandas.read_csv(config["FileInfo"]["filePath"])
-print(dataset.shape)
-# head
-print(dataset.head(20))
-# descriptions
-print(dataset.describe())
-# class distribution
-#print(dataset.groupby('class').size())
-print(dataset.groupby('Class').size())
-# box and whisker plots
-#dataset.plot(kind='box', subplots=True, layout=(2,2), sharex=False, sharey=False)
-#plt.show()
+
+def getConfig():
+    config = configparser.ConfigParser()
+    config.read("properties.ini")
+    return config
+
+def getDataSet(config):
+    dataset = pandas.read_csv(config["FileInfo"]["filePath"])
+    print(dataset.shape)
+    # head
+    print(dataset.head(20))
+    # descriptions
+    print(dataset.describe())
+    # class distribution
+    #print(dataset.groupby('class').size())
+    print(dataset.groupby('Class').size())
+    # box and whisker plots
+    #dataset.plot(kind='box', subplots=True, layout=(2,2), sharex=False, sharey=False)
+    #plt.show()
+    return dataset
+
+def getTrainingData(arrayValues, numberOfColumns):
+    x = array[:,0:numberOfColumns]
+    return x
+
+def getPredictionValuesFromTrainingData(arrayValues, numberOfColumns):
+    y = array[:,numberOfColumns]
+    return y
+
+def getUserInput(config):
+    dataset = pandas.read_csv(config["FileInfo"]["userInputFilePath"])
+    print(dataset.shape)
+    # head
+    print(dataset.head(20))
+    # descriptions
+    print(dataset.describe())
+    # class distribution
+    #print(dataset.groupby('class').size())
+    print(dataset.groupby('Class').size())
+    # box and whisker plots
+    #dataset.plot(kind='box', subplots=True, layout=(2,2), sharex=False, sharey=False)
+    #plt.show()
+    return dataset
+
+config = getConfig()
+dataset = getDataSet(config)
 array = dataset.values
-X = array[0:20:,0:6]
+
+numberOfColumns= len(array[0])
+print("numberofcols ", numberOfColumns)
+xTrainingData = getTrainingData(array, numberOfColumns - 1)
 #print("X = {}".format(X))
-Y = array[0:20:,6]
-xValidation = array[20:,0:6]
-yvalidation = array[20:,6]
-print("train Data {}".format(X))
+yTrainingPredictonResult = getPredictionValuesFromTrainingData(array, numberOfColumns - 1)
+
+userInput = getUserInput(config)
+userInputArray = userInput.values
+print("Number of cols in userInput ", len(userInputArray[0]))
+
+xValidation = userInputArray[:,0:(numberOfColumns - 1)]
+yvalidation = userInputArray[:,(numberOfColumns - 1)]
+print("train Data {}".format(xTrainingData))
 print("TestData = {}".format(xValidation))
+
+#KNN Algorithm starts
 knn = KNeighborsClassifier()
-knn.fit(X, Y)
+knn.fit(xTrainingData, yTrainingPredictonResult)
 predictions = knn.predict(xValidation)
 print("predictions {}".format(predictions))
 print("accuracy {}".format(accuracy_score(yvalidation, predictions)))
+
